@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>สงกรานต์ จากอดีตสู่ปัจจุบัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0b1030;--gold:#f2c45a;--ink:#fdf3da;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Noto Serif Thai',Georgia,serif}
+#wrap{max-width:960px;margin:0 auto;padding:12px}
+#stage{position:relative;aspect-ratio:16/9;overflow:hidden;border:2px solid var(--gold);border-radius:10px;background:#fbd98a}
+svg{width:100%;height:100%;display:block}
+#sub{position:absolute;left:4%;right:4%;bottom:4%;text-align:center;font-size:clamp(13px,2.6vw,24px);line-height:1.5;color:#fff;text-shadow:0 2px 6px #000;background:rgba(5,8,30,.62);padding:6px 10px;border-radius:8px;min-height:1.5em}
+#title{position:absolute;top:3%;left:0;right:0;text-align:center;font-size:clamp(12px,2.2vw,20px);color:#fff;text-shadow:0 2px 6px #000,0 0 4px #000;font-weight:700}
+#start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(5,8,30,.85);cursor:pointer;text-align:center}
+#start b{font-size:clamp(20px,4.5vw,40px);color:var(--gold)}
+#start span.btn{border:2px solid var(--gold);border-radius:40px;padding:8px 26px;font-size:clamp(14px,2.5vw,22px)}
+#bar{height:6px;background:#222a5a;border-radius:3px;margin:10px 0}
+#fill{height:100%;width:0;background:var(--gold);border-radius:3px}
+#ctl{display:flex;gap:10px;align-items:center;font-size:14px;flex-wrap:wrap}
+button{background:#1a2260;color:var(--ink);border:1px solid var(--gold);border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity 1.2s}.scene.on{opacity:1}
+.spin{animation:sp 30s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.mv{animation:mv 25s linear forwards}@keyframes mv{from{transform:translate(-300px,120px)}to{transform:translate(300px,-60px)}}
+.fall{animation:fa 2.4s linear infinite}@keyframes fa{from{transform:translateY(-30px);opacity:0}15%{opacity:1}to{transform:translateY(330px);opacity:.2}}
+.flow{animation:fw .8s linear infinite}@keyframes fw{to{stroke-dashoffset:-28}}
+.bob{animation:bo 1.2s ease-in-out infinite alternate}@keyframes bo{to{transform:translateY(-8px)}}
+.dr{animation:dr 30s linear infinite}@keyframes dr{to{transform:translateX(-160px)}}
+</style></head><body>
+<div id="wrap">
+<div id="stage">
+<svg id="svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"></svg>
+<div id="title"></div><div id="sub"></div>
+<div id="start"><b>สงกรานต์ จากอดีตสู่ปัจจุบัน</b><span>แอนิเมชัน 2D · 3 นาที · พร้อมเสียงบรรยายภาษาไทย</span><span class="btn">▶ เริ่มเล่น</span></div>
+</div>
+<div id="bar"><div id="fill"></div></div>
+<div id="ctl"><button id="pp">⏸ หยุด</button><button id="rp">↺ เล่นใหม่</button><button id="mu">🔊 เสียง: เปิด</button><span id="tm">0:00 / 3:00</span></div>
+</div>
+<script>
+const D=[25,30,30,30,25,25,15];
+const S=[
+{t:"ต้นกำเนิด · ดวงอาทิตย์ย้ายราศี",l:["ทุกปี เมื่อกลางเดือนเมษายนมาถึง ฟ้าเปลี่ยนสี และคนไทยก็เริ่มต้นปีใหม่ตามประเพณี","คำว่า สงกรานต์ มาจากภาษาสันสกฤต แปลว่า การเคลื่อนย้าย","หมายถึงการที่ดวงอาทิตย์ย้ายเข้าสู่ราศีเมษ ตามคติโหราศาสตร์ที่ได้รับอิทธิพลจากอินเดีย","ผสานกับความเชื่อเรื่องน้ำและการเพาะปลูกของชาวสุวรรณภูมิ"]},
+{t:"ตำนานนางสงกรานต์",l:["เล่าสืบกันมาในตำนานว่า ท้าวกบิลพรหมแพ้ปริศนาธรรมแก่ธรรมบาลกุมาร","ต้องตัดเศียรของตนเองตามสัญญา","ธิดาทั้งเจ็ดจึงผลัดกันอัญเชิญเศียรแห่รอบเขาไกรลาสปีละหนึ่งองค์","เทพธิดาผู้นั้นคือ นางสงกรานต์ ที่ประจำในแต่ละปี"]},
+{t:"อยุธยา · สรงน้ำพระ ก่อเจดีย์ทราย",l:["ถึงสมัยอยุธยา สงกรานต์เป็นประเพณีสำคัญของปีใหม่ทั้งในราชสำนักและหมู่บ้าน","ผู้คนไปวัด ทำบุญ สรงน้ำพระพุทธรูป","และช่วยกันก่อเจดีย์ทราย เพื่อนำทรายที่ติดเท้าออกจากวัดกลับคืนสู่วัด","น้ำจึงเป็นเครื่องหมายของความบริสุทธิ์ และการเริ่มต้นใหม่"]},
+{t:"รัตนโกสินทร์ · รดน้ำขอพรผู้ใหญ่",l:["ในยุคต่อมา แม้ทางการจะกำหนดให้วันขึ้นปีใหม่เป็นวันที่ หนึ่ง มกราคม","แต่สงกรานต์ยังคงเป็นปีใหม่ในใจของคนไทย","ลูกหลานเดินทางกลับบ้าน รดน้ำดำหัวขอพรจากผู้ใหญ่","พร้อมทำบุญ ปล่อยนกปล่อยปลา และอยู่กับครอบครัว"]},
+{t:"เทศกาลแห่งความสนุก",l:["ในเดือนเมษายนที่ร้อนที่สุดของปี การเล่นสาดน้ำจึงกลายเป็นความสนุกที่ทุกคนรอคอย","ทางเหนือเรียกว่า ปีใหม่เมือง มีขบวนแห่พระพุทธสิหิงค์ที่เชียงใหม่","ทุกภูมิภาคมีเอกลักษณ์ของตนเอง","แต่ทุกที่ล้วนมีความหมายเดียวกัน คือ ความสุข และความเย็นใจ"]},
+{t:"ปัจจุบัน · พ.ศ. 2569",l:["มาถึงวันนี้ ปีพุทธศักราช สองพันห้าร้อยหกสิบเก้า สงกรานต์ตรงกับวันที่ สิบสาม ถึง สิบห้า เมษายน","และเมื่อปี สองพันห้าร้อยหกสิบหก ยูเนสโกขึ้นทะเบียนสงกรานต์ในประเทศไทยเป็นมรดกวัฒนธรรมของมนุษยชาติ","วันนี้ผู้คนเล่นน้ำด้วยปืนฉีดน้ำและเสื้อลายดอกไม้","พร้อมใส่ใจการประหยัดน้ำ และความปลอดภัยบนท้องถนน"]},
+{t:"สุขสันต์วันสงกรานต์",l:["ผ่านมาหลายร้อยปี น้ำยังคงเป็นสัญลักษณ์ของการอวยพร","สงกรานต์ คือความกตัญญู ความสุข และความผูกพันที่ส่งต่อกันมาทุกรุ่น","ขอให้ทุกคนมีแต่ความสุข เย็นกายเย็นใจ ตลอดปี"]}
+];
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const sky=(a,b)=>`<defs><linearGradient id="g${a.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="800" height="450" fill="url(#g${a.slice(1)})"/>`;
+const sun=(x,y,r,c="#ffd34d")=>`<g transform="translate(${x},${y})"><g class="spin">${[...Array(12)].map((_,i)=>`<rect x="-4" y="${-r-34}" width="8" height="26" rx="4" fill="${c}" transform="rotate(${i*30})"/>`).join("")}</g><circle r="${r}" fill="${c}"/></g>`;
+const ground=(c,y=330)=>`<rect y="${y}" width="800" height="${450-y}" fill="${c}"/>`;
+const drops=(n,col="#7fd6ff")=>Array.from({length:n},(_,i)=>`<circle class="fall" style="animation-delay:${(rnd(0,2.4)).toFixed(1)}s" cx="${rnd(10,790)|0}" cy="${rnd(0,60)|0}" r="${rnd(2,4.5).toFixed(1)}" fill="${col}"/>`).join("");
+const person=(x,s=1,c="#c0392b",arm=0,y=340)=>`<g transform="translate(${x},${y}) scale(${s})"><circle cy="-92" r="10" fill="#d9a066"/><path d="M-15 -80h30l9 60h-48z" fill="${c}"/><rect x="-10" y="-22" width="8" height="22" fill="#3a2a20"/><rect x="2" y="-22" width="8" height="22" fill="#3a2a20"/>${arm?`<rect x="8" y="-78" width="28" height="6" rx="3" fill="#d9a066" transform="rotate(-25 8 -75)"/>`:""}</g>`;
+const jet=(a,b,c,d,e,f)=>`<path class="flow" d="M${a} ${b} Q${c} ${d} ${e} ${f}" stroke="#4fc3f7" stroke-width="4" fill="none" stroke-dasharray="8 6"/>`;
+const stupa=(x,h=170,c="#f2c45a")=>`<g fill="${c}"><rect x="${x-60}" y="${330-18}" width="120" height="18"/><rect x="${x-46}" y="${330-40}" width="92" height="22"/><path d="M${x-34} ${330-40} Q${x-34} ${330-h*.7} ${x} ${330-h*.8} Q${x+34} ${330-h*.7} ${x+34} ${330-40}Z"/><rect x="${x-3}" y="${330-h}" width="6" height="${h*.22}"/></g>`;
+const sand=x=>`<path d="M${x} 340 l22 -50 l22 50z" fill="#e8cf9a" stroke="#b8924a"/><path d="M${x+22} 290 v-18" stroke="#8a5a1a" stroke-width="2"/><path d="M${x+22} 272 l14 5 l-14 5z" fill="#e0508a"/>`;
+const flowers=()=>Array.from({length:14},(_,i)=>`<circle cx="${30+i*57}" cy="${352+(i%3)*14}" r="5" fill="${['#fff','#ffb3d1','#ffe07a'][i%3]}"/>`).join("");
+const sc=[
+()=>sky("#ffd98a","#ff8a5a")+`<g class="mv">${sun(260,240,48)}</g>`+`<path d="M0 330 Q200 260 400 320 T800 300 V450H0Z" fill="#7a4a2a"/>`+stupa(600,150,"#fff3c4")+ground("#5a3a1a",360),
+()=>sky("#9bdcff","#ffe9a8")+sun(120,90,34)+`<path d="M360 330 L560 120 L760 330Z" fill="#fff"/><path d="M500 180 l60 -60 l40 40 l-40 20z" fill="#e8f4ff"/>`+ground("#6aa84f")+`<g class="dr">${[0,1,2,3,4,5,6].map(i=>person(60+i*70,.85,["#e53935","#fb8c00","#fdd835","#43a047","#1e88e5","#8e24aa","#d81b60"][i])).join("")}<circle cx="280" cy="195" r="22" fill="#f2c45a"/></g>`,
+()=>sky("#aee6ff","#fff2c2")+sun(700,80,34)+stupa(200,190)+`<ellipse cx="500" cy="332" rx="90" ry="14" fill="#a0642a"/><path d="M430 330 q0 -80 70 -80 q70 0 70 80z" fill="#f2c45a"/><circle cx="500" cy="228" r="24" fill="#f2c45a"/>`+ground("#c9a45a")+[560,620,680,740,100,350].map(sand).join("")+person(380,1,"#e8e8e8",1)+jet(412,260,450,300,470,300)+drops(8),
+()=>sky("#c7ecff","#ffe9a8")+sun(110,80,32)+`<path d="M520 250 h220 l-26 -60 h-168z" fill="#8a3a1a"/><rect x="540" y="250" width="180" height="80" fill="#e0b070"/><rect x="590" y="270" width="30" height="60" fill="#5a3a1a"/>`+ground("#6aa84f")+flowers()+`<rect x="260" y="318" width="70" height="22" rx="4" fill="#8a5a2a"/>`+person(290,1.15,"#ffffff",0,320)+person(150,1.1,"#e53935",1,340)+`<path d="M195 285 q40 -10 90 30" fill="none" stroke="#4fc3f7" stroke-width="4" stroke-dasharray="6 6" class="flow"/>`+drops(6),
+()=>sky("#8fe0ff","#fff1b0")+sun(700,70,36)+`<path d="M0 270h800v60H0z" fill="#d85a4a" opacity=".5"/>`+ground("#8a8f99")+[80,200,320,440,560,680].map((x,i)=>person(x,1.05,["#e53935","#fb8c00","#e91e63","#43a047","#8e24aa","#1e88e5"][i],1)).join("")+jet(110,270,160,230,210,300)+jet(230,270,280,220,350,300)+jet(350,270,400,230,450,300)+jet(470,270,520,220,570,300)+jet(590,270,640,230,690,300)+drops(40),
+()=>sky("#6fc8ff","#d8f2ff")+sun(90,70,30)+[0,1,2,3,4,5].map(i=>`<rect x="${20+i*135}" y="${150+(i%3)*35}" width="105" height="${330-150-(i%3)*35}" fill="#4a6a9a"/>${[0,1,2].map(r=>`<rect x="${34+i*135}" y="${170+(i%3)*35+r*44}" width="16" height="22" fill="#cfe9ff"/><rect x="${70+i*135}" y="${170+(i%3)*35+r*44}" width="16" height="22" fill="#cfe9ff"/>`).join("")}`).join("")+ground("#6a6f7a")+[110,260,420,560,700].map((x,i)=>person(x,1.1,["#ff7043","#26c6da","#ec407a","#ffee58","#66bb6a"][i],1)).join("")+jet(135,270,200,230,250,305)+jet(445,270,500,230,540,305)+`<rect x="560" y="48" width="220" height="40" rx="10" fill="#0b1030" stroke="#f2c45a" stroke-width="2"/><text x="670" y="74" text-anchor="middle" font-size="19" fill="#f2c45a" font-family="'Noto Serif Thai',serif">UNESCO 2566 / 2023</text>`+drops(30),
+()=>sky("#ff9a5a","#7a3a8a")+sun(400,290,60,"#ffd34d")+ground("#3a2a4a")+`<g class="bob">${[0,1,2,3,4,5,6,7].map(i=>`<circle cx="${60+i*100}" cy="${rnd(100,200)|0}" r="6" fill="#ffb3d1"/>`).join("")}</g>`+[200,300,500,600].map((x,i)=>person(x,1.2,["#ffffff","#f2c45a","#ffffff","#f2c45a"][i],0,350)+`<circle cx="${x}" cy="262" r="5" fill="#d9a066"/>`).join("")+drops(14,"#ffd0e8")
+];
+const svg=$("svg");
+svg.innerHTML=sc.map((f,i)=>`<g class="scene" id="s${i}">${f()}</g>`).join("");
+let t=0,playing=false,muted=false,cur=-1,line=-1,last=0,raf;
+const total=D.reduce((a,b)=>a+b),starts=D.map((d,i)=>D.slice(0,i).reduce((a,b)=>a+b,0));
+let voice=null;
+function pickVoice(){voice=(speechSynthesis.getVoices()||[]).find(v=>/^th/i.test(v.lang))||null}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(txt){if(muted||!("speechSynthesis" in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang="th-TH";if(voice)u.voice=voice;u.rate=.95;speechSynthesis.speak(u)}
+function fmt(s){s=s|0;return(s/60|0)+":"+String(s%60).padStart(2,"0")}
+function show(i){document.querySelectorAll(".scene").forEach((e,k)=>e.classList.toggle("on",k===i));$("title").textContent=S[i].t}
+function frame(now){
+ if(!playing)return;const dt=(now-last)/1000;last=now;t=Math.min(t+dt,total);
+ let i=starts.findIndex((s,k)=>t>=s&&t<s+D[k]);if(i<0)i=S.length-1;
+ if(i!==cur){cur=i;line=-1;show(i)}
+ const ls=S[i].l,per=D[i]/ls.length,li=Math.min(((t-starts[i])/per)|0,ls.length-1);
+ if(li!==line){line=li;$("sub").textContent=ls[li];speak(ls[li])}
+ $("fill").style.width=(t/total*100)+"%";$("tm").textContent=fmt(t)+" / 3:00";
+ if(t>=total){playing=false;$("pp").textContent="▶ เล่น";$("sub").textContent="— จบ —";return}
+ raf=requestAnimationFrame(frame)}
+function play(){playing=true;$("pp").textContent="⏸ หยุด";last=performance.now();if("speechSynthesis" in window&&speechSynthesis.paused)speechSynthesis.resume();raf=requestAnimationFrame(frame)}
+function pause(){playing=false;$("pp").textContent="▶ เล่น";cancelAnimationFrame(raf);if("speechSynthesis" in window)speechSynthesis.pause()}
+function restart(){cancelAnimationFrame(raf);if("speechSynthesis" in window)speechSynthesis.cancel();t=0;cur=-1;line=-1;play()}
+$("start").onclick=()=>{$("start").style.display="none";restart()};
+$("pp").onclick=()=>playing?pause():(t>=total?restart():play());
+$("rp").onclick=restart;
+$("mu").onclick=()=>{muted=!muted;$("mu").textContent="🔊 เสียง: "+(muted?"ปิด":"เปิด");if(muted&&"speechSynthesis" in window)speechSynthesis.cancel()};
+show(0);$("sub").textContent="";
+</script></body></html>
